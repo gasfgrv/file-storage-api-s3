@@ -52,13 +52,13 @@ class FileStorageApiS3ApplicationTests {
 
     @BeforeAll
     static void beforeAll() throws IOException, InterruptedException {
-        log.debug("Criando o Bucket: {}", BUCKET_NAME);
+        log.info("Criando o Bucket: {}", BUCKET_NAME);
         localStack.execInContainer("awslocal", "s3", "mb", "s3://%s".formatted(BUCKET_NAME));
     }
 
     @AfterAll
     static void afterAll() throws IOException, InterruptedException {
-        log.debug("Destruindo o Bucket: {}", BUCKET_NAME);
+        log.info("Destruindo o Bucket: {}", BUCKET_NAME);
         localStack.execInContainer("awslocal", "s3", "rb", "s3://%s".formatted(BUCKET_NAME), "--force");
     }
 
