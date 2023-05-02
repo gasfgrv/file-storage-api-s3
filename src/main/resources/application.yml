@@ -1,0 +1,8 @@
+server:
+  port: 8080
+
+aws:
+  serviceEndpoint: ${AWS_SERVICE_ENDPOINT}
+  region: ${AWS_REGION}
+  accessKey: ${AWS_ACCESS_KEY}
+  secretKey: ${AWS_SECRET_KEY}
