@@ -35,4 +35,4 @@ build/
 ### Terraform ###
 **/.terraform/
 *.hcl
-*.tfstate
+*.tfstate*
