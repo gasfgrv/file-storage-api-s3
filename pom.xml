@@ -22,6 +22,7 @@
 		<springdoc.version>2.0.4</springdoc.version>
 		<aws-sdk.version>1.12.459</aws-sdk.version>
 		<jaxb.version>2.3.1</jaxb.version>
+		<rest-assured.version>5.3.0</rest-assured.version>
 	</properties>
 
 	<dependencies>
@@ -62,7 +63,6 @@
 			<artifactId>localstack</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-s3</artifactId>

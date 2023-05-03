@@ -1,6 +1,5 @@
 package com.github.gasfgrv.storage.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +9,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +38,7 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 @Testcontainers
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FileStorageApiS3ApplicationTests {
 
     static final String IMAGE_NAME = "localstack/localstack:latest";
@@ -48,8 +51,6 @@ class FileStorageApiS3ApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private AmazonS3 amazonS3Client;
     private File arquivo;
 
     @DynamicPropertySource
@@ -78,6 +79,7 @@ class FileStorageApiS3ApplicationTests {
     }
 
     @Test
+    @Order(1)
     @DisplayName("Deve salvar um arquivo no bucket")
     void deveSalvarUmArquivoNoBucket() throws Exception {
         mockMvc.perform(multipart("/v1/arquivos/upload")
@@ -97,10 +99,9 @@ class FileStorageApiS3ApplicationTests {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Deve fazer o download de um arquivo")
     void deveFazerODownloadDeUmArquivo() throws Exception {
-        amazonS3Client.putObject(BUCKET_NAME, "teste", arquivo);
-
         var downloadArquivo = mockMvc.perform(get("/v1/arquivos/download")
                         .param("nomeArquivo", "teste")
                         .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -108,7 +109,11 @@ class FileStorageApiS3ApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        var tamanhoArquivo = downloadArquivo.andReturn().getResponse().getContentAsString().getBytes().length;
+        var tamanhoArquivo = downloadArquivo.andReturn()
+                .getResponse()
+                .getContentAsString()
+                .getBytes()
+                .length;
 
         assertThat(tamanhoArquivo).isEqualTo(arquivo.length());
     }
