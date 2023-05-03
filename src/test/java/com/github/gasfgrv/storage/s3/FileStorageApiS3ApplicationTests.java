@@ -1,8 +1,14 @@
 package com.github.gasfgrv.storage.s3;
 
+import com.amazonaws.services.s3.AmazonS3;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +24,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import lombok.extern.slf4j.Slf4j;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,6 +48,10 @@ class FileStorageApiS3ApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private AmazonS3 amazonS3Client;
+    private File arquivo;
+
     @DynamicPropertySource
     static void awsProperties(DynamicPropertyRegistry registry) {
         registry.add("aws.serviceEndpoint", () -> localStack.getEndpointOverride(S3));
@@ -62,17 +72,45 @@ class FileStorageApiS3ApplicationTests {
         localStack.execInContainer("awslocal", "s3", "rb", "s3://%s".formatted(BUCKET_NAME), "--force");
     }
 
+    @BeforeEach
+    void setUp() {
+        arquivo = Paths.get("src", "test", "resources", "teste.txt").toFile();
+    }
+
     @Test
     @DisplayName("Deve salvar um arquivo no bucket")
     void deveSalvarUmArquivoNoBucket() throws Exception {
         mockMvc.perform(multipart("/v1/arquivos/upload")
-                        .file(new MockMultipartFile("arquivo", new byte[20]))
-                        .param("nomeArquivo", "batata")
+                        .file(new MockMultipartFile("arquivo", Files.readAllBytes(arquivo.toPath())))
+                        .param("nomeArquivo", "teste")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensagem").value("Arquivo salvo no bucket"));
+
+        var arquivosBucket = localStack
+                .execInContainer("awslocal", "s3", "ls", "s3://%s".formatted(BUCKET_NAME))
+                .getStdout();
+
+        assertThat(arquivosBucket).contains(arquivo.getName().split("\\.")[0]);
+    }
+
+    @Test
+    @DisplayName("Deve fazer o download de um arquivo")
+    void deveFazerODownloadDeUmArquivo() throws Exception {
+        amazonS3Client.putObject(BUCKET_NAME, "teste", arquivo);
+
+        var downloadArquivo = mockMvc.perform(get("/v1/arquivos/download")
+                        .param("nomeArquivo", "teste")
+                        .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        var tamanhoArquivo = downloadArquivo.andReturn().getResponse().getContentAsString().getBytes().length;
+
+        assertThat(tamanhoArquivo).isEqualTo(arquivo.length());
     }
 
 }
