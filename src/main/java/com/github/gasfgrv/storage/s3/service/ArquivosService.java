@@ -48,7 +48,7 @@ public class ArquivosService implements IArquivosService {
 
             var s3Object = s3.getObject(BUCKET, nome);
             return s3Object.getObjectContent().readAllBytes();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Erro ao fazer o download: ", e);
             throw new DownloadException(e);
         }
