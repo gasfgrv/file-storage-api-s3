@@ -26,6 +26,13 @@ jobs:
           distribution: "temurin"
           cache: maven
 
+      - name: cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Run Tests
         run: mvn -B test --file pom.xml
 
@@ -43,6 +50,13 @@ jobs:
           java-version: 17
           distribution: "temurin"
           cache: maven
+
+      - name: cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - name: Generate jar
         run: mvn -B clean package -DskipTests
