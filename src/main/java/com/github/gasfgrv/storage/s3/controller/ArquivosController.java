@@ -37,7 +37,7 @@ public class ArquivosController {
                     .mensagem(upload)
                     .build();
 
-            resposta.add(linkTo(methodOn(ArquivosController.class).dowload(nomeArquivo)).withRel("download"));
+            resposta.add(linkTo(methodOn(ArquivosController.class).download(nomeArquivo)).withRel("download"));
 
             return ResponseEntity.ok(resposta);
         } catch (Exception e) {
@@ -47,8 +47,8 @@ public class ArquivosController {
     }
 
     @GetMapping(value = "/download", produces = APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> dowload(@RequestParam("nomeArquivo") String nomeArquivo) {
-        return ResponseEntity.ok(service.dowload(Arquivo.builder()
+    public ResponseEntity<byte[]> download(@RequestParam("nomeArquivo") String nomeArquivo) {
+        return ResponseEntity.ok(service.download(Arquivo.builder()
                 .nome(nomeArquivo)
                 .build()));
     }

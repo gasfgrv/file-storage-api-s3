@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "s3_access_bucket_role_document" {
 
 resource "aws_iam_role" "s3_access_bucket_role" {
   name               = "S3springAccessBucketRole"
-  description        = "Acesso ao bucket para poder fazer o dowload/upload dos arquivos"
+  description        = "Acesso ao bucket para poder fazer o download/upload dos arquivos"
   assume_role_policy = data.aws_iam_policy_document.s3_access_bucket_role_document.json
 }
 

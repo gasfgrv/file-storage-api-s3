@@ -79,20 +79,20 @@ class ArquivosControllerTest {
     @DisplayName("Deve baixar um arquivo")
     void deveBaixarUmArquivo() throws IOException {
         var arquivo = gerarArquivo();
-        given(arquivosService.dowload(any(Arquivo.class)))
+        given(arquivosService.download(any(Arquivo.class)))
                 .willReturn(Files.readAllBytes(CAMINHO_ARQUIVO));
 
-        var dowload = arquivosController.dowload(arquivo.getNome());
+        var download = arquivosController.download(arquivo.getNome());
 
-        var headers = dowload.getHeaders();
+        var headers = download.getHeaders();
         assertThat(headers)
                 .isEmpty();
 
-        var statusCode = dowload.getStatusCode();
+        var statusCode = download.getStatusCode();
         assertThat(statusCode)
                 .isEqualTo(HttpStatus.OK);
 
-        var body = dowload.getBody();
+        var body = download.getBody();
         assertThat(body)
                 .isNotEmpty()
                 .hasSize(arquivo.getDados().length);

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(info = @Info(
         title = "File Storage api S3",
-        description = "Api para fazer upload/dowload de arquivos no S3",
+        description = "Api para fazer upload/download de arquivos no S3",
         version = "V1",
         contact = @Contact(
                 name = "gasfgrv",

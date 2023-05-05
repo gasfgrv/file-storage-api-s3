@@ -40,7 +40,7 @@ public class ArquivosService implements IArquivosService {
     }
 
     @Override
-    public byte[] dowload(Arquivo arquivo) {
+    public byte[] download(Arquivo arquivo) {
         try {
             var nome = arquivo.getNome();
 

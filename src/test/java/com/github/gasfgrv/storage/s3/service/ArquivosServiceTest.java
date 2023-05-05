@@ -44,7 +44,7 @@ class ArquivosServiceTest {
         given(amazonS3.getObject(BUCKET, arquivo.getNome()))
                 .willReturn(gerarS3Object());
 
-        var bytes = arquivosService.dowload(arquivo);
+        var bytes = arquivosService.download(arquivo);
         assertThat(bytes)
                 .contains(arquivo.getDados());
 
@@ -60,7 +60,7 @@ class ArquivosServiceTest {
                 .willThrow(new AmazonServiceException("Erro ao obter o arquivo", new RuntimeException()));
 
         assertThatExceptionOfType(DownloadException.class)
-                .isThrownBy(() -> arquivosService.dowload(arquivo))
+                .isThrownBy(() -> arquivosService.download(arquivo))
                 .withCauseInstanceOf(AmazonServiceException.class);
 
         assertThat(output)
