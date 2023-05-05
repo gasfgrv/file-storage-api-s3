@@ -2,9 +2,13 @@ package com.github.gasfgrv.storage.s3.utils;
 
 import com.amazonaws.services.s3.model.S3Object;
 import com.github.gasfgrv.storage.s3.model.Arquivo;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
@@ -15,12 +19,10 @@ import static com.github.gasfgrv.storage.s3.utils.ConstantesUtils.CAMINHO_ARQUIV
 public class MockUtils {
 
     public static S3Object gerarS3Object() throws IOException {
-        var inputStream = new FileInputStream(CAMINHO_ARQUIVO.toFile());
-
         var s3object = new S3Object();
-        s3object.setKey(gerarArquivo().getNome());
+        s3object.setKey("teste");
         s3object.setBucketName(BUCKET);
-        s3object.setObjectContent(inputStream);
+        s3object.setObjectContent(gerarInputStream());
         return s3object;
     }
 
@@ -29,6 +31,15 @@ public class MockUtils {
                 "teste",
                 MediaType.TEXT_PLAIN_VALUE,
                 Files.readAllBytes(CAMINHO_ARQUIVO));
+    }
+
+    public static MultipartFile gerarMultipartFile() throws IOException {
+        return new MockMultipartFile("teste", gerarInputStream());
+    }
+
+    @NotNull
+    private static FileInputStream gerarInputStream() throws FileNotFoundException {
+        return new FileInputStream(CAMINHO_ARQUIVO.toFile());
     }
 
 }

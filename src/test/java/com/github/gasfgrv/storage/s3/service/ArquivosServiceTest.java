@@ -40,12 +40,16 @@ class ArquivosServiceTest {
     @DisplayName("Deve retonar um array de bytes ao solicitar um arquivo")
     void deveRetonarUmArrayDeBytesAoSolicitarUmArquivo(CapturedOutput output) throws IOException {
         var arquivo = gerarArquivo();
-        given(amazonS3.getObject(BUCKET, arquivo.getNome())).willReturn(gerarS3Object());
+
+        given(amazonS3.getObject(BUCKET, arquivo.getNome()))
+                .willReturn(gerarS3Object());
 
         var bytes = arquivosService.dowload(arquivo);
+        assertThat(bytes)
+                .contains(arquivo.getDados());
 
-        assertThat(output).contains("Fazendo o download do arquivo %s no bucket".formatted(arquivo.getNome()));
-        assertThat(bytes).contains(arquivo.getDados());
+        assertThat(output)
+                .contains("Fazendo o download do arquivo %s no bucket".formatted(arquivo.getNome()));
     }
 
     @Test
@@ -59,26 +63,31 @@ class ArquivosServiceTest {
                 .isThrownBy(() -> arquivosService.dowload(arquivo))
                 .withCauseInstanceOf(AmazonServiceException.class);
 
-        assertThat(output).contains("Erro ao fazer o download");
+        assertThat(output)
+                .contains("Erro ao fazer o download");
     }
 
     @Test
     @DisplayName("Deve retornar uma String informando que foi feito o upload")
     void deveRetornarUmaStringInformandoQueFoiFeitoOUpload(CapturedOutput output) throws IOException {
         var arquivo = gerarArquivo();
+
         given(amazonS3.putObject(anyString(), anyString(), any(InputStream.class), any(ObjectMetadata.class)))
                 .willReturn(new PutObjectResult());
 
         var upload = arquivosService.upload(arquivo);
+        assertThat(upload)
+                .isEqualTo("Arquivo salvo no bucket");
 
-        assertThat(output).contains("Fazendo o upload do arquivo %s no bucket".formatted(arquivo.getNome()));
-        assertThat(upload).isEqualTo("Arquivo salvo no bucket");
+        assertThat(output)
+                .contains("Fazendo o upload do arquivo %s no bucket".formatted(arquivo.getNome()));
     }
 
     @Test
     @DisplayName("Deve lançar uma UploadException ao fazer o upload")
     void deveLancarUmaUploadExceptionAoFazerOUpload(CapturedOutput output) throws IOException {
         var arquivo = gerarArquivo();
+
         given(amazonS3.putObject(anyString(), anyString(), any(InputStream.class), any(ObjectMetadata.class)))
                 .willThrow(new AmazonServiceException("Erro ao obter o arquivo", new RuntimeException()));
 
@@ -86,7 +95,8 @@ class ArquivosServiceTest {
                 .isThrownBy(() -> arquivosService.upload(arquivo))
                 .withCauseInstanceOf(AmazonServiceException.class);
 
-        assertThat(output).contains("Erro ao fazer o upload");
+        assertThat(output)
+                .contains("Erro ao fazer o upload");
     }
 
 }

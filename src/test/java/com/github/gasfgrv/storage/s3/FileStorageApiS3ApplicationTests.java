@@ -1,18 +1,7 @@
 package com.github.gasfgrv.storage.s3;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +15,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static com.github.gasfgrv.storage.s3.utils.ConstantesUtils.BUCKET;
+import static com.github.gasfgrv.storage.s3.utils.ConstantesUtils.CAMINHO_ARQUIVO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -42,10 +37,10 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 class FileStorageApiS3ApplicationTests {
 
     static final String IMAGE_NAME = "localstack/localstack:latest";
-    static final String BUCKET_NAME = "teste-spring-bucket";
+    public static final DockerImageName DOCKER_IMAGE_NAME = DockerImageName.parse(IMAGE_NAME);
 
     @Container
-    static LocalStackContainer localStack = new LocalStackContainer(DockerImageName.parse(IMAGE_NAME))
+    static LocalStackContainer localStack = new LocalStackContainer(DOCKER_IMAGE_NAME)
             .withServices(S3);
 
     @Autowired
@@ -63,19 +58,19 @@ class FileStorageApiS3ApplicationTests {
 
     @BeforeAll
     static void beforeAll() throws IOException, InterruptedException {
-        log.info("Criando o Bucket: {}", BUCKET_NAME);
-        localStack.execInContainer("awslocal", "s3", "mb", "s3://%s".formatted(BUCKET_NAME));
+        log.info("Criando o Bucket: {}", BUCKET);
+        localStack.execInContainer("awslocal", "s3", "mb", "s3://%s".formatted(BUCKET));
     }
 
     @AfterAll
     static void afterAll() throws IOException, InterruptedException {
-        log.info("Destruindo o Bucket: {}", BUCKET_NAME);
-        localStack.execInContainer("awslocal", "s3", "rb", "s3://%s".formatted(BUCKET_NAME), "--force");
+        log.info("Destruindo o Bucket: {}", BUCKET);
+        localStack.execInContainer("awslocal", "s3", "rb", "s3://%s".formatted(BUCKET), "--force");
     }
 
     @BeforeEach
     void setUp() {
-        arquivo = Paths.get("src", "test", "resources", "teste.txt").toFile();
+        arquivo = CAMINHO_ARQUIVO.toFile();
     }
 
     @Test
@@ -92,10 +87,10 @@ class FileStorageApiS3ApplicationTests {
                 .andExpect(jsonPath("$.mensagem").value("Arquivo salvo no bucket"));
 
         var arquivosBucket = localStack
-                .execInContainer("awslocal", "s3", "ls", "s3://%s".formatted(BUCKET_NAME))
+                .execInContainer("awslocal", "s3", "ls", "s3://%s".formatted(BUCKET))
                 .getStdout();
-
-        assertThat(arquivosBucket).contains(arquivo.getName().split("\\.")[0]);
+        assertThat(arquivosBucket)
+                .contains(arquivo.getName().split("\\.")[0]);
     }
 
     @Test
@@ -114,8 +109,8 @@ class FileStorageApiS3ApplicationTests {
                 .getContentAsString()
                 .getBytes()
                 .length;
-
-        assertThat(tamanhoArquivo).isEqualTo(arquivo.length());
+        assertThat(tamanhoArquivo)
+                .isEqualTo(arquivo.length());
     }
 
 }
