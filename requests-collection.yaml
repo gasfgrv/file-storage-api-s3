@@ -1,0 +1,105 @@
+_type: export
+__export_format: 4
+__export_date: 2023-05-05T01:02:59.465Z
+__export_source: insomnia.desktop.app:v2022.4.0
+resources:
+  - _id: req_b51be6a3033040dd846b6a394b15d42e
+    parentId: wrk_e3927739efb14655a64eb060b6716125
+    modified: 1683034706397
+    created: 1683027375623
+    url: http://localhost:8080/v1/arquivos/upload
+    name: upload
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_983ce77d4310471087f100c69f79cdf1
+          name: nomeArquivo
+          value: github-white
+          description: ""
+        - id: pair_feaf0ac2168d4c51b5a1a6ac72ded9a9
+          name: arquivo
+          value: ""
+          description: ""
+          type: file
+          fileName: /home/gusta/Imagens/github-mark/github-mark/github-mark-white.png
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_5604f34eb0d24e98b0f7898cf4a43b94
+    authentication: {}
+    metaSortKey: -1683027375623
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_e3927739efb14655a64eb060b6716125
+    parentId: null
+    modified: 1683027371065
+    created: 1683027371065
+    name: AWS
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_30c303ae97974a31a8d4f7be7b4e9ee1
+    parentId: wrk_e3927739efb14655a64eb060b6716125
+    modified: 1683033610635
+    created: 1683028719137
+    url: http://localhost:8080/v1/arquivos/download
+    name: download
+    description: ""
+    method: GET
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_983ce77d4310471087f100c69f79cdf1
+          name: nomeArquivo
+          value: github-white
+          description: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_5604f34eb0d24e98b0f7898cf4a43b94
+    authentication: {}
+    metaSortKey: -1682909689748
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_71efb2081e82e3610333cbf391c2ddd837f50557
+    parentId: wrk_e3927739efb14655a64eb060b6716125
+    modified: 1683027371155
+    created: 1683027371155
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1683027371155
+    _type: environment
+  - _id: jar_71efb2081e82e3610333cbf391c2ddd837f50557
+    parentId: wrk_e3927739efb14655a64eb060b6716125
+    modified: 1683027371157
+    created: 1683027371157
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_302fb7ba1a674e6392a80b247a1ad78a
+    parentId: wrk_e3927739efb14655a64eb060b6716125
+    modified: 1683027371141
+    created: 1683027371141
+    fileName: AWS
+    contents: ""
+    contentType: yaml
+    _type: api_spec
