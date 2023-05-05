@@ -1,8 +1,9 @@
 package com.github.gasfgrv.storage.s3.exception;
 
-public class UploadException extends RuntimeException {
+public class UploadException extends BaseException {
 
     public UploadException(Exception exception) {
-        super(exception.getCause().getMessage(), exception);
+        super(exception);
     }
+
 }

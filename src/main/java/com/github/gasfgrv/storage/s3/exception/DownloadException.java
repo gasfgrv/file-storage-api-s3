@@ -1,7 +1,8 @@
 package com.github.gasfgrv.storage.s3.exception;
 
-public class DownloadException extends RuntimeException {
+public class DownloadException extends BaseException {
     public DownloadException(Exception exception) {
-        super(exception.getCause().getMessage(), exception);
+        super(exception);
     }
+
 }
