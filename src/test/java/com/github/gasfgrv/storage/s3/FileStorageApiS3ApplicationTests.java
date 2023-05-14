@@ -1,7 +1,16 @@
 package com.github.gasfgrv.storage.s3;
 
+import java.io.File;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,12 +24,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-
 import static com.github.gasfgrv.storage.s3.utils.ConstantesUtils.BUCKET;
 import static com.github.gasfgrv.storage.s3.utils.ConstantesUtils.CAMINHO_ARQUIVO;
+import static com.github.gasfgrv.storage.s3.utils.MockUtils.gerarMultipartFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -78,8 +84,7 @@ class FileStorageApiS3ApplicationTests {
     @DisplayName("Deve salvar um arquivo no bucket")
     void deveSalvarUmArquivoNoBucket() throws Exception {
         mockMvc.perform(multipart("/v1/arquivos/upload")
-                        .file(new MockMultipartFile("arquivo", Files.readAllBytes(arquivo.toPath())))
-                        .param("nomeArquivo", "teste")
+                        .file((MockMultipartFile) gerarMultipartFile())
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -90,7 +95,7 @@ class FileStorageApiS3ApplicationTests {
                 .execInContainer("awslocal", "s3", "ls", "s3://%s".formatted(BUCKET))
                 .getStdout();
         assertThat(arquivosBucket)
-                .contains(arquivo.getName().split("\\.")[0]);
+                .contains(arquivo.getName());
     }
 
     @Test
@@ -98,7 +103,7 @@ class FileStorageApiS3ApplicationTests {
     @DisplayName("Deve fazer o download de um arquivo")
     void deveFazerODownloadDeUmArquivo() throws Exception {
         var downloadArquivo = mockMvc.perform(get("/v1/arquivos/download")
-                        .param("nomeArquivo", "teste")
+                        .param("nomeArquivo", "teste.txt")
                         .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

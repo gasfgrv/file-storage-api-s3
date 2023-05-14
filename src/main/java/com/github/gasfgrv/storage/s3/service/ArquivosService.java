@@ -6,7 +6,6 @@ import com.github.gasfgrv.storage.s3.exception.DownloadException;
 import com.github.gasfgrv.storage.s3.exception.UploadException;
 import com.github.gasfgrv.storage.s3.model.Arquivo;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ public class ArquivosService implements IArquivosService {
     public String upload(Arquivo arquivo) {
         try {
             var nome = arquivo.getNome();
-
             log.info("Fazendo o upload do arquivo {} no bucket", nome);
 
             var metadata = new ObjectMetadata();
@@ -40,13 +38,10 @@ public class ArquivosService implements IArquivosService {
     }
 
     @Override
-    public byte[] download(Arquivo arquivo) {
+    public byte[] download(String nomeArquivo) {
         try {
-            var nome = arquivo.getNome();
-
-            log.info("Fazendo o download do arquivo {} no bucket", nome);
-
-            var s3Object = s3.getObject(BUCKET, nome);
+            log.info("Fazendo o download do arquivo {} no bucket", nomeArquivo);
+            var s3Object = s3.getObject(BUCKET, nomeArquivo);
             return s3Object.getObjectContent().readAllBytes();
         } catch (Exception e) {
             log.error("Erro ao fazer o download: ", e);

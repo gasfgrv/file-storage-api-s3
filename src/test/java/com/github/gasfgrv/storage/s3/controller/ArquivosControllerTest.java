@@ -3,7 +3,9 @@ package com.github.gasfgrv.storage.s3.controller;
 import com.github.gasfgrv.storage.s3.exception.UploadException;
 import com.github.gasfgrv.storage.s3.model.Arquivo;
 import com.github.gasfgrv.storage.s3.service.ArquivosService;
-import com.github.gasfgrv.storage.s3.utils.ConstantesUtils;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,15 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 
-import java.io.IOException;
-import java.nio.file.Files;
-
 import static com.github.gasfgrv.storage.s3.utils.ConstantesUtils.CAMINHO_ARQUIVO;
 import static com.github.gasfgrv.storage.s3.utils.MockUtils.gerarArquivo;
 import static com.github.gasfgrv.storage.s3.utils.MockUtils.gerarMultipartFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +40,7 @@ class ArquivosControllerTest {
         given(arquivosService.upload(any(Arquivo.class)))
                 .willReturn("Arquivo salvo no bucket");
 
-        var response = arquivosController.upload(arquivo.getNome(), gerarMultipartFile());
+        var response = arquivosController.upload(gerarMultipartFile());
 
         var headers = response.getHeaders();
         assertThat(headers)
@@ -51,6 +51,8 @@ class ArquivosControllerTest {
                 .isEqualTo(HttpStatus.OK);
 
         var body = response.getBody();
+        assertThat(body)
+                .isNotNull();
         assertThat(body.getLink("download"))
                 .isPresent()
                 .map(Link::getHref)
@@ -71,7 +73,7 @@ class ArquivosControllerTest {
                 .willThrow(new UploadException(new RuntimeException("Erro ao fazer o upload do arquivo")));
 
         assertThatExceptionOfType(UploadException.class)
-                .isThrownBy(() -> arquivosController.upload(nome, multipart))
+                .isThrownBy(() -> arquivosController.upload(multipart))
                 .withCauseInstanceOf(UploadException.class);
     }
 
@@ -79,14 +81,17 @@ class ArquivosControllerTest {
     @DisplayName("Deve baixar um arquivo")
     void deveBaixarUmArquivo() throws IOException {
         var arquivo = gerarArquivo();
-        given(arquivosService.download(any(Arquivo.class)))
+        given(arquivosService.download(anyString()))
                 .willReturn(Files.readAllBytes(CAMINHO_ARQUIVO));
 
         var download = arquivosController.download(arquivo.getNome());
 
         var headers = download.getHeaders();
         assertThat(headers)
-                .isEmpty();
+                .isNotEmpty();
+
+        assertThat(headers.keySet().stream())
+                .contains("Content-Disposition", "Content-Length");
 
         var statusCode = download.getStatusCode();
         assertThat(statusCode)
@@ -94,6 +99,9 @@ class ArquivosControllerTest {
 
         var body = download.getBody();
         assertThat(body)
+                .isNotNull();
+
+        assertThat(body.getContentAsByteArray())
                 .isNotEmpty()
                 .hasSize(arquivo.getDados().length);
     }
