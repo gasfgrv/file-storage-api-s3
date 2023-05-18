@@ -32,12 +32,6 @@ paths:
       tags:
         - arquivos-controller
       operationId: upload
-      parameters:
-        - name: nomeArquivo
-          in: query
-          required: true
-          schema:
-            type: string
       requestBody:
         content:
           multipart/form-data:
@@ -50,7 +44,7 @@ paths:
                   type: string
                   format: binary
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -68,15 +62,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/octet-stream:
               schema:
-                type: array
-                items:
-                  type: string
-                  format: byte
+                type: string
+                format: binary
 components:
   schemas:
     Links:

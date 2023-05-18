@@ -1,36 +1,54 @@
 _type: export
 __export_format: 4
-__export_date: 2023-05-05T01:02:59.465Z
-__export_source: insomnia.desktop.app:v2022.4.0
+__export_date: 2023-05-18T00:13:29.603Z
+__export_source: insomnia.desktop.app:v2023.2.2
 resources:
-  - _id: req_b51be6a3033040dd846b6a394b15d42e
-    parentId: wrk_e3927739efb14655a64eb060b6716125
-    modified: 1683034706397
-    created: 1683027375623
-    url: http://localhost:8080/v1/arquivos/upload
-    name: upload
+  - _id: req_c5f82e0600c14c339b74db6ae71d599a
+    parentId: wrk_48d72688958b493fa18615f4c9abbdf1
+    modified: 1684368662719
+    created: 1684368662719
+    url: "{{ _.base_url }}/v1/arquivos/download"
+    name: /v1/arquivos/download
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - name: nomeArquivo
+        disabled: false
+        value: string
+    headers: []
+    authentication: {}
+    metaSortKey: -1684368662719
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_48d72688958b493fa18615f4c9abbdf1
+    parentId: null
+    modified: 1684359577773
+    created: 1684359577773
+    name: s3-storage.yaml
+    description: ""
+    scope: design
+    _type: workspace
+  - _id: req_4d68c015132c4fc58b592895b9b15a72
+    parentId: wrk_48d72688958b493fa18615f4c9abbdf1
+    modified: 1684368662718
+    created: 1684368662718
+    url: "{{ _.base_url }}/v1/arquivos/upload"
+    name: /v1/arquivos/upload
     description: ""
     method: POST
     body:
       mimeType: multipart/form-data
-      params:
-        - id: pair_983ce77d4310471087f100c69f79cdf1
-          name: nomeArquivo
-          value: github-white
-          description: ""
-        - id: pair_feaf0ac2168d4c51b5a1a6ac72ded9a9
-          name: arquivo
-          value: ""
-          description: ""
-          type: file
-          fileName: /home/gusta/Imagens/github-mark/github-mark/github-mark-white.png
     parameters: []
-    headers:
-      - name: Content-Type
-        value: multipart/form-data
-        id: pair_5604f34eb0d24e98b0f7898cf4a43b94
+    headers: []
     authentication: {}
-    metaSortKey: -1683027375623
+    metaSortKey: -1684368662718
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -39,67 +57,119 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: wrk_e3927739efb14655a64eb060b6716125
-    parentId: null
-    modified: 1683027371065
-    created: 1683027371065
-    name: AWS
-    description: ""
-    scope: collection
-    _type: workspace
-  - _id: req_30c303ae97974a31a8d4f7be7b4e9ee1
-    parentId: wrk_e3927739efb14655a64eb060b6716125
-    modified: 1683033610635
-    created: 1683028719137
-    url: http://localhost:8080/v1/arquivos/download
-    name: download
-    description: ""
-    method: GET
-    body:
-      mimeType: multipart/form-data
-      params:
-        - id: pair_983ce77d4310471087f100c69f79cdf1
-          name: nomeArquivo
-          value: github-white
-          description: ""
-    parameters: []
-    headers:
-      - name: Content-Type
-        value: multipart/form-data
-        id: pair_5604f34eb0d24e98b0f7898cf4a43b94
-    authentication: {}
-    metaSortKey: -1682909689748
-    isPrivate: false
-    settingStoreCookies: true
-    settingSendCookies: true
-    settingDisableRenderRequestBody: false
-    settingEncodeUrl: true
-    settingRebuildPath: true
-    settingFollowRedirects: global
-    _type: request
-  - _id: env_71efb2081e82e3610333cbf391c2ddd837f50557
-    parentId: wrk_e3927739efb14655a64eb060b6716125
-    modified: 1683027371155
-    created: 1683027371155
+  - _id: env_ffcad6c08594ddcf46c2717181e5db600dbcd848
+    parentId: wrk_48d72688958b493fa18615f4c9abbdf1
+    modified: 1684368705573
+    created: 1684359577779
     name: Base Environment
-    data: {}
-    dataPropertyOrder: null
+    data:
+      base_url: http://localhost:8080
+    dataPropertyOrder:
+      "&":
+        - base_url
     color: null
     isPrivate: false
-    metaSortKey: 1683027371155
+    metaSortKey: 1684359577780
     _type: environment
-  - _id: jar_71efb2081e82e3610333cbf391c2ddd837f50557
-    parentId: wrk_e3927739efb14655a64eb060b6716125
-    modified: 1683027371157
-    created: 1683027371157
+  - _id: jar_ffcad6c08594ddcf46c2717181e5db600dbcd848
+    parentId: wrk_48d72688958b493fa18615f4c9abbdf1
+    modified: 1684359577782
+    created: 1684359577782
     name: Default Jar
     cookies: []
     _type: cookie_jar
-  - _id: spc_302fb7ba1a674e6392a80b247a1ad78a
-    parentId: wrk_e3927739efb14655a64eb060b6716125
-    modified: 1683027371141
-    created: 1683027371141
-    fileName: AWS
-    contents: ""
+  - _id: spc_c6fb13ea9f6249b99a2335b80125c558
+    parentId: wrk_48d72688958b493fa18615f4c9abbdf1
+    modified: 1684368653664
+    created: 1684359577774
+    fileName: s3-storage.yaml
+    contents: |
+      openapi: 3.0.1
+      info:
+        title: File Storage api S3
+        description: Api para fazer upload/download de arquivos no S3
+        contact:
+          name: gasfgrv
+          url: https://github.com/gasfgrv
+          email: gustavo_almeida11@hotmail.com
+        version: V1
+      servers:
+      - url: http://localhost:8080
+        description: Generated server url
+      paths:
+        /v1/arquivos/upload:
+          post:
+            tags:
+            - arquivos-controller
+            operationId: upload
+            requestBody:
+              content:
+                multipart/form-data:
+                  schema:
+                    required:
+                    - arquivo
+                    type: object
+                    properties:
+                      arquivo:
+                        type: string
+                        format: binary
+            responses:
+              "200":
+                description: OK
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Resposta'
+        /v1/arquivos/download:
+          get:
+            tags:
+            - arquivos-controller
+            operationId: download
+            parameters:
+            - name: nomeArquivo
+              in: query
+              required: true
+              schema:
+                type: string
+            responses:
+              "200":
+                description: OK
+                content:
+                  application/octet-stream:
+                    schema:
+                      type: string
+                      format: binary
+      components:
+        schemas:
+          Links:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/Link'
+          Resposta:
+            type: object
+            properties:
+              mensagem:
+                type: string
+              _links:
+                $ref: '#/components/schemas/Links'
+          Link:
+            type: object
+            properties:
+              href:
+                type: string
+              hreflang:
+                type: string
+              title:
+                type: string
+              type:
+                type: string
+              deprecation:
+                type: string
+              profile:
+                type: string
+              name:
+                type: string
+              templated:
+                type: boolean
     contentType: yaml
     _type: api_spec
