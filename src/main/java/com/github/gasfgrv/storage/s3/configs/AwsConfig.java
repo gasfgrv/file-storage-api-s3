@@ -27,19 +27,19 @@ public class AwsConfig {
     private String region;
 
     @Bean
-    private AWSCredentials getAwsCredentials() {
+    public AWSCredentials getAwsCredentials() {
         log.info("Recuperando credenciais da AWS");
         return new BasicAWSCredentials(accessKey, secretKey);
     }
 
     @Bean
-    private AWSCredentialsProvider getAwsCredentialsProvider() {
+    public AWSCredentialsProvider getAwsCredentialsProvider() {
         log.info("Gerando o provedor de credenciais da AWS");
         return new AWSStaticCredentialsProvider(getAwsCredentials());
     }
 
     @Bean
-    private EndpointConfiguration getEndpointConfiguration() {
+    public EndpointConfiguration getEndpointConfiguration() {
         log.info("Configurando o endpoint do S3");
         return new EndpointConfiguration(serviceEndpoint, region);
     }
