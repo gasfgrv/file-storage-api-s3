@@ -16,23 +16,41 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AwsConfig {
 
+    @Value("${aws.accessKey}")
+    private String accessKey;
+    @Value("${aws.secretKey}")
+    private String secretKey;
+
+    @Value("${aws.serviceEndpoint}")
+    private String serviceEndpoint;
+    @Value("${aws.region}")
+    private String region;
+
     @Bean
-    public AmazonS3 amazonS3Client(@Value("${aws.accessKey}") String accessKey,
-                                   @Value("${aws.secretKey}") String secretKey,
-                                   @Value("${aws.serviceEndpoint}") String serviceEndpoint,
-                                   @Value("${aws.region}") String region) {
-
+    private AWSCredentials getAwsCredentials() {
         log.info("Recuperando credenciais da AWS");
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        AWSCredentialsProvider provider = new AWSStaticCredentialsProvider(credentials);
+        return new BasicAWSCredentials(accessKey, secretKey);
+    }
 
+    @Bean
+    private AWSCredentialsProvider getAwsCredentialsProvider() {
+        log.info("Gerando o provedor de credenciais da AWS");
+        return new AWSStaticCredentialsProvider(getAwsCredentials());
+    }
+
+    @Bean
+    private EndpointConfiguration getEndpointConfiguration() {
         log.info("Configurando o endpoint do S3");
-        EndpointConfiguration endpointConfiguration = new EndpointConfiguration(serviceEndpoint, region);
+        return new EndpointConfiguration(serviceEndpoint, region);
+    }
 
+    @Bean
+    public AmazonS3 amazonS3Client() {
         log.info("Criando client do S3");
-        return AmazonS3ClientBuilder.standard()
-                .withEndpointConfiguration(endpointConfiguration)
-                .withCredentials(provider)
+        return AmazonS3ClientBuilder
+                .standard()
+                .withEndpointConfiguration(getEndpointConfiguration())
+                .withCredentials(getAwsCredentialsProvider())
                 .build();
     }
 

@@ -22,13 +22,13 @@ public class ArquivosService implements IArquivosService {
     @Override
     public String upload(Arquivo arquivo) {
         try {
-            var nome = arquivo.getNome();
-            log.info("Fazendo o upload do arquivo {} no bucket", nome);
+            var nomeArquivo = arquivo.getNome();
+            log.info("Fazendo o upload do arquivo {} no bucket", nomeArquivo);
 
             var metadata = new ObjectMetadata();
             metadata.setContentLength(arquivo.getDados().length);
 
-            s3.putObject(BUCKET, nome, new ByteArrayInputStream(arquivo.getDados()), metadata);
+            s3.putObject(BUCKET, nomeArquivo, new ByteArrayInputStream(arquivo.getDados()), metadata);
 
             return "Arquivo salvo no bucket";
         } catch (Exception e) {
@@ -42,7 +42,10 @@ public class ArquivosService implements IArquivosService {
         try {
             log.info("Fazendo o download do arquivo {} no bucket", nomeArquivo);
             var s3Object = s3.getObject(BUCKET, nomeArquivo);
-            return s3Object.getObjectContent().readAllBytes();
+
+            return s3Object
+                    .getObjectContent()
+                    .readAllBytes();
         } catch (Exception e) {
             log.error("Erro ao fazer o download: ", e);
             throw new DownloadException(e);

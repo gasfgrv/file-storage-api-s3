@@ -33,20 +33,25 @@ public class ArquivosController {
     @PostMapping(value = "/upload", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Resposta> upload(@RequestParam("arquivo") MultipartFile arquivo) {
         try {
-            var nomeArquivo = arquivo.getOriginalFilename();
+            var nomeArquivo = arquivo
+                    .getOriginalFilename();
 
-            var arquivoParaUpload = Arquivo.builder()
+            var arquivoParaUpload = Arquivo
+                    .builder()
                     .id(UUID.randomUUID())
                     .nome(nomeArquivo)
                     .tipo(arquivo.getContentType())
                     .dados(arquivo.getBytes())
                     .build();
 
-            var resposta = Resposta.builder()
+            var resposta = Resposta
+                    .builder()
                     .mensagem(service.upload(arquivoParaUpload))
                     .build();
 
-            resposta.add(linkTo(methodOn(ArquivosController.class).download(nomeArquivo)).withRel("download"));
+            resposta
+                    .add(linkTo(methodOn(ArquivosController.class)
+                            .download(nomeArquivo)).withRel("download"));
 
             return ResponseEntity.ok(resposta);
         } catch (Exception e) {
@@ -58,7 +63,9 @@ public class ArquivosController {
     @GetMapping(value = "/download", produces = APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> download(@RequestParam("nomeArquivo") String nomeArquivo) {
         var resource = new ByteArrayResource(service.download(nomeArquivo));
-        return ResponseEntity.ok()
+
+        return ResponseEntity
+                .ok()
                 .contentLength(resource.contentLength())
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(nomeArquivo))
                 .body(resource);
